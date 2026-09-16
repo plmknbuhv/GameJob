@@ -1,0 +1,118 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "GameJob";
+}
+
+<section class="app-shell">
+    <div class="intro">
+        <p class="eyebrow">GameJob</p>
+        <h1>게임 채용공고와 자기소개서 PDF를 비교 분석합니다</h1>
+        <p>저장한 채용공고 HTML 파일과 자기소개서 PDF를 업로드하면 핵심 요건, 매칭 기술, 부족한 역량, 보완 제안을 확인할 수 있습니다.</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="analysis-form">
+        <div class="field">
+            <label asp-for="JobHtml">채용공고 HTML 파일</label>
+            <input asp-for="JobHtml" type="file" accept=".html,.htm,text/html" />
+            <small>게임잡 공고 페이지를 브라우저에서 연 뒤 Ctrl+S로 저장한 HTML 파일을 업로드하세요.</small>
+        </div>
+        <div class="field">
+            <label asp-for="ResumePdf">자기소개서 PDF</label>
+            <input asp-for="ResumePdf" type="file" accept="application/pdf,.pdf" />
+        </div>
+        <button type="submit">분석하기</button>
+    </form>
+
+    @if (Model.ErrorMessage is not null)
+    {
+        <div class="alert-box">@Model.ErrorMessage</div>
+    }
+
+    @if (Model.Report is not null)
+    {
+        <section class="result-grid">
+            <article class="score-panel">
+                <span>적합도</span>
+                <strong>@Model.Report.Score</strong>
+                <em>@Model.Report.Level</em>
+            </article>
+
+            <article>
+                <h2>공고 정보</h2>
+                <p class="job-title">@Model.Report.Job.Title</p>
+                <div class="tags">
+                    @foreach (var skill in Model.Report.Job.Skills)
+                    {
+                        <span>@skill</span>
+                    }
+                </div>
+            </article>
+
+            <article>
+                <h2>매칭된 기술</h2>
+                <ul>
+                    @foreach (var item in Model.Report.MatchedSkills.DefaultIfEmpty("없음"))
+                    {
+                        <li>@item</li>
+                    }
+                </ul>
+            </article>
+
+            <article>
+                <h2>부족한 기술</h2>
+                <ul>
+                    @foreach (var item in Model.Report.MissingSkills.DefaultIfEmpty("없음"))
+                    {
+                        <li>@item</li>
+                    }
+                </ul>
+            </article>
+
+            <article class="wide">
+                <h2>강점</h2>
+                <ul>
+                    @foreach (var item in Model.Report.Strengths)
+                    {
+                        <li>@item</li>
+                    }
+                </ul>
+            </article>
+
+            <article class="wide">
+                <h2>보완 제안</h2>
+                <ul>
+                    @foreach (var item in Model.Report.Recommendations)
+                    {
+                        <li>@item</li>
+                    }
+                </ul>
+            </article>
+
+            <article class="wide detail-panel">
+                <h2>상세 보강 플랜</h2>
+                <div class="improvement-list">
+                    @foreach (var item in Model.Report.ImprovementItems)
+                    {
+                        <section class="improvement-item">
+                            <div class="improvement-heading">
+                                <h3>@item.Title</h3>
+                                <span>@item.Priority</span>
+                            </div>
+                            <dl>
+                                <dt>중요한 이유</dt>
+                                <dd>@item.Reason</dd>
+                                <dt>포트폴리오에 채울 내용</dt>
+                                <dd>@item.PortfolioAction</dd>
+                                <dt>자기소개서에 쓰는 방향</dt>
+                                <dd>@item.ResumeAction</dd>
+                                <dt>표현 예시</dt>
+                                <dd>@item.EvidenceExample</dd>
+                            </dl>
+                        </section>
+                    }
+                </div>
+            </article>
+        </section>
+    }
+</section>

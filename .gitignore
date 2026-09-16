@@ -1,0 +1,23 @@
+# Build outputs
+bin/
+obj/
+**/bin/
+**/obj/
+
+# User/local settings
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Runtime data
+GameJobWeb/App_Data/
+
+# Python leftovers from earlier CLI version
+__pycache__/
+*.pyc
+*.pyo
+
+# OS files
+Thumbs.db
+.DS_Store
